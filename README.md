@@ -1,4 +1,4 @@
-# RSSparser
+# RSS parser
 
 Adding collections and resources allows only by admin
 email admin@mail.ru
