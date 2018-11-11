@@ -47,6 +47,7 @@ namespace RSSref.Controllers
 
         [Authorize]
         [HttpGet]
+        [OutputCache(Location = System.Web.UI.OutputCacheLocation.Any, Duration = 60)]
         public ActionResult Resource(string RSSURL, string RSSName)
         {
             if (RSSURL == null) return RedirectToAction("Index");
