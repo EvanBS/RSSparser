@@ -20,6 +20,11 @@ namespace RSSref.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public virtual DbSet<MainCollection> MainCollections { get; set; }
+
+        public virtual DbSet<MainResource> MainResources { get; set; }
+
+
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

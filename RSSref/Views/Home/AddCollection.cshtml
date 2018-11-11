@@ -1,0 +1,23 @@
+﻿@model RSSref.Models.MainCollection
+
+@{
+    ViewBag.Title = "AddCollection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add сollection</h2>
+
+<div class="editPage">
+    @using (Html.BeginForm("AddCollection", "Home", FormMethod.Post))
+    {
+        <fieldset>
+            <div class="form-group">
+                <p>Введите имя коллекции: </p>
+                <input type="text" class="form-control" name="Name" value="" />
+
+            </div>
+            <p><input id="submitButton" class="btn btn-primary" type="submit" value="Подтвердить" /></p>
+
+        </fieldset>
+    }
+</div>

@@ -1,4 +1,4 @@
-﻿body {
+﻿﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -21,4 +21,21 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.col {
+    text-align: left;
+    min-width: 250px;
+}
+
+td {
+    min-width: 200px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.focus:focus {
+    color: red;
 }

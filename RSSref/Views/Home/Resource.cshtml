@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "Resource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using System.Text.RegularExpressions
+
+<br />
+
+<h2>@ViewBag.RSSName Feed</h2>
+<br />
+
+
+
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Link</th>
+            <th>Description</th>
+            <th>Publish Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.RSSFeed != null)
+        {
+            foreach (var item in ViewBag.RSSFeed)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td><a href="@item.Link">Details</a></td>
+                    <td>
+                        @{
+                            string pattern = @"<img.*?src=""(?<url>.*?)"".*?>";
+                            Regex rx = new Regex(pattern);
+                            foreach (Match m in rx.Matches(item.Description))
+                            {
+                                <img width="500" height="300" src="@m.Groups["url"].Value" />
+                            }
+                            <p>@Regex.Replace(item.Description, "<.*?>", String.Empty)</p>
+
+                        }
+                    </td>
+                    <td>@item.PubDate</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
