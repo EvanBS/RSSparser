@@ -1,9 +1,10 @@
-﻿
+﻿@model PagedList.IPagedList<RSSref.Models.RSSFeed>
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "Resource";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @using System.Text.RegularExpressions
 
 <br />
@@ -25,9 +26,8 @@
         </tr>
     </thead>
     <tbody>
-        @if (ViewBag.RSSFeed != null)
-        {
-            foreach (var item in ViewBag.RSSFeed)
+        
+            @foreach (var item in Model)
             {
                 <tr>
                     <td>@item.Title</td>
@@ -47,6 +47,10 @@
                     <td>@item.PubDate</td>
                 </tr>
             }
-        }
+        
     </tbody>
 </table>
+<br />
+Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Resource", new { CollectionName = ViewBag.CollectionName, ResourceName = ViewBag.RSSName, page = page }))

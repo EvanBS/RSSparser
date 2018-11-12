@@ -1,4 +1,5 @@
-﻿using RSSref.Models;
+﻿using PagedList;
+using RSSref.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,6 +16,12 @@ namespace RSSref.Controllers
     public class HomeController : Controller
     {
         ApplicationDbContext db = new ApplicationDbContext();
+
+        MainCollection currentCollection = new MainCollection();
+
+        MainResource currencResource = new MainResource();
+
+        IEnumerable<RSSFeed> RSSFeedData = null;
 
         [Authorize]
         public async Task<ActionResult> Index()
@@ -49,23 +56,35 @@ namespace RSSref.Controllers
         [Authorize]
         [HttpGet]
         [OutputCache(Location = System.Web.UI.OutputCacheLocation.Any, Duration = 60)]
-        public async Task<ActionResult> Resource(string CollectionName, string ResourceName)
+        public async Task<ActionResult> Resource(string CollectionName, string ResourceName, int? page)
         {
+            int pageSize = 4;
+            int pageNumber = (page ?? 1);
+
+            if (currencResource.ResourceName == ResourceName)
+            {
+
+                ViewBag.URL = currencResource.URL;
+                ViewBag.RSSName = ResourceName;
+                ViewBag.CollectionName = CollectionName;
+
+                return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
+            }
+
+
             // find collection by name (made for user-friendly url despite the speed)
-            MainCollection mainCollection = await db.MainCollections.Where(c => c.Name == CollectionName).FirstOrDefaultAsync();
+            currentCollection = await db.MainCollections.Where(c => c.Name == CollectionName).FirstOrDefaultAsync();
 
             // find resource
-            MainResource mainResource = await db.MainResources.Where(r => r.ResourceName == ResourceName).FirstOrDefaultAsync();
-            
-            if (mainResource == null) return RedirectToAction("Index");
+            currencResource = await db.MainResources.Where(r => r.ResourceName == ResourceName).FirstOrDefaultAsync();
 
             WebClient wclient = new WebClient();
 
-            string RSSData = wclient.DownloadString(mainResource.URL);
+            string RSSData = wclient.DownloadString(currencResource.URL);
 
             XDocument xml = XDocument.Parse(RSSData);
 
-            var RSSFeedData = (from x in xml.Descendants("item")
+            RSSFeedData = (from x in xml.Descendants("item")
                                let bytesTitle = Encoding.Default.GetBytes(((string)x.Element("title")))
                                let bytesDesc = Encoding.Default.GetBytes(((string)x.Element("description")))
 
@@ -76,10 +95,13 @@ namespace RSSref.Controllers
                                    Description = Encoding.UTF8.GetString(bytesDesc),
                                    PubDate = ((string)x.Element("pubDate"))
                                });
-            ViewBag.RSSFeed = RSSFeedData;
-            ViewBag.URL = mainResource.URL;
+
+            
+            ViewBag.URL = currencResource.URL;
             ViewBag.RSSName = ResourceName;
-            return View();
+            ViewBag.CollectionName = CollectionName;
+
+            return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
         }
 
 
