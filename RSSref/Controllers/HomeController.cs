@@ -19,6 +19,7 @@ namespace RSSref.Controllers
         [Authorize]
         public async Task<ActionResult> Index()
         {
+
             List<MainCollection> collections = await db.MainCollections.Include(c => c.MainResources).ToListAsync();
             return View(collections);
         }
@@ -48,12 +49,19 @@ namespace RSSref.Controllers
         [Authorize]
         [HttpGet]
         [OutputCache(Location = System.Web.UI.OutputCacheLocation.Any, Duration = 60)]
-        public ActionResult Resource(string RSSURL, string RSSName)
+        public async Task<ActionResult> Resource(string CollectionName, string ResourceName)
         {
-            if (RSSURL == null) return RedirectToAction("Index");
+            // find collection by name (made for user-friendly url despite the speed)
+            MainCollection mainCollection = await db.MainCollections.Where(c => c.Name == CollectionName).FirstOrDefaultAsync();
+
+            // find resource
+            MainResource mainResource = await db.MainResources.Where(r => r.ResourceName == ResourceName).FirstOrDefaultAsync();
+            
+            if (mainResource == null) return RedirectToAction("Index");
 
             WebClient wclient = new WebClient();
-            string RSSData = wclient.DownloadString(RSSURL);
+
+            string RSSData = wclient.DownloadString(mainResource.URL);
 
             XDocument xml = XDocument.Parse(RSSData);
 
@@ -69,8 +77,8 @@ namespace RSSref.Controllers
                                    PubDate = ((string)x.Element("pubDate"))
                                });
             ViewBag.RSSFeed = RSSFeedData;
-            ViewBag.URL = RSSURL;
-            ViewBag.RSSName = RSSName;
+            ViewBag.URL = mainResource.URL;
+            ViewBag.RSSName = ResourceName;
             return View();
         }
 

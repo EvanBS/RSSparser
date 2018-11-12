@@ -24,7 +24,7 @@
             @foreach (var res in item.MainResources)
             {
                 <div class="col dropdown-item">
-                    @Html.ActionLink(@res.ResourceName, "Resource", new { RSSURL = @res.URL, RSSName = @res.ResourceName.ToString() }, new { @class = "dropdown-item" })
+                    @Html.ActionLink(@res.ResourceName, "Resource", new { CollectionName = @item.Name.ToString(), ResourceName = @res.ResourceName.ToString() }, new { @class = "dropdown-item" })
                 </div>
             }
         </div>
