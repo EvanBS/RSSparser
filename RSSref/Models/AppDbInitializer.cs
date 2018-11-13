@@ -79,7 +79,7 @@ namespace RSSref.Models
             {
                 new MainResource{ ResourceName = "SpaceX", URL = "https://www.space.com/home/feed/site.xml", MainCollection_Id = mainCollectionsDefault[0].Id },
                 new MainResource{ ResourceName = "Lentach", URL = "https://lenta.ru/rss/news", MainCollection_Id = mainCollectionsDefault[1].Id },
-                new MainResource{ ResourceName = "Times", URL = "http://rss.nytimes.com/services/xml/rss/nyt/ArtandDesign.xml", MainCollection_Id = mainCollectionsDefault[1].Id },
+                new MainResource{ ResourceName = "RT", URL = "https://www.rt.com/rss/", MainCollection_Id = mainCollectionsDefault[1].Id },
                 new MainResource{ ResourceName = "DTF", URL = "https://dtf.ru/rss/all", MainCollection_Id = mainCollectionsDefault[2].Id },
 
             };
