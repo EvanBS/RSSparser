@@ -1,13 +1,10 @@
 ﻿using PagedList;
 using RSSref.Models;
-using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
 
@@ -15,7 +12,7 @@ namespace RSSref.Controllers
 {
     public class HomeController : Controller
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        IRepository repository;
 
         MainCollection currentCollection = new MainCollection();
 
@@ -23,11 +20,15 @@ namespace RSSref.Controllers
 
         IEnumerable<RSSFeed> RSSFeedData = null;
 
+        public HomeController(IRepository repository)
+        {
+            this.repository = repository;
+        }
+
         [Authorize]
         public async Task<ActionResult> Index()
         {
-
-            List<MainCollection> collections = await db.MainCollections.Include(c => c.MainResources).ToListAsync();
+            List<MainCollection> collections = await repository.GetCollectionsJoinResourcesAsync();
             return View(collections);
         }
 
@@ -45,8 +46,8 @@ namespace RSSref.Controllers
         {
             if (collection != null)
             {
-                db.MainCollections.Add(collection);
-                db.SaveChanges();
+                repository.SaveCollection(collection);
+                repository.SaveChanges();
             }
 
 
@@ -73,10 +74,10 @@ namespace RSSref.Controllers
 
 
             // find collection by name (made for user-friendly url despite the speed)
-            currentCollection = await db.MainCollections.Where(c => c.Name == CollectionName).FirstOrDefaultAsync();
+            currentCollection = await repository.FindCollectionByNameAsync(CollectionName);
 
             // find resource
-            currencResource = await db.MainResources.Where(r => r.ResourceName == ResourceName).FirstOrDefaultAsync();
+            currencResource = await repository.FindResourceByNameAsync(ResourceName);
 
             WebClient wclient = new WebClient();
 
@@ -109,7 +110,7 @@ namespace RSSref.Controllers
         [HttpGet]
         public async Task<ActionResult> AddResource()
         {
-            ViewBag.collections = await db.MainCollections.Include(c => c.MainResources).ToListAsync();
+            ViewBag.collections = await repository.GetCollectionsJoinResourcesAsync();
 
             return View();
         }
@@ -119,8 +120,8 @@ namespace RSSref.Controllers
         [HttpPost]
         public ActionResult AddResource(MainResource mainResource)
         {
-            db.MainResources.Add(mainResource);
-            db.SaveChanges();
+            repository.SaveResource(mainResource);
+            repository.SaveChanges();
             return RedirectToAction("Index");
         }
     }
