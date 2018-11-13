@@ -67,7 +67,7 @@ namespace RSSref.Models
 
     public class RSSrepository : IDisposable, IRepository
     {
-        public ApplicationDbContext db = new ApplicationDbContext();
+        public ApplicationDbContext db;
 
         public ApplicationDbContext context
         {

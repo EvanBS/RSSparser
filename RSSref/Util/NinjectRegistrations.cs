@@ -7,7 +7,7 @@ namespace RSSref.Util
     {
         public override void Load()
         {
-            Bind<IRepository>().To<RSSrepository>();
+            Bind<IRepository>().To<RSSrepository>().WithPropertyValue("context", new ApplicationDbContext());
         }
     }
 }
