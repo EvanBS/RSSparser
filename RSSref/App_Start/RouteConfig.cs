@@ -18,6 +18,12 @@ namespace RSSref
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+                name: "FindResource",
+                url: "{controller}/{action}/{id}/{ResourceName}/{page}",
+                defaults: new { controller = "Home", action = "Resource", page = UrlParameter.Optional }
+            );
         }
     }
 }

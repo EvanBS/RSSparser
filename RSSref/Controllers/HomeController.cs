@@ -57,7 +57,7 @@ namespace RSSref.Controllers
         [Authorize]
         [HttpGet]
         [OutputCache(Location = System.Web.UI.OutputCacheLocation.Any, Duration = 60)]
-        public async Task<ActionResult> Resource(string CollectionName, string ResourceName, int? page)
+        public async Task<ActionResult> Resource(string id, string ResourceName, int? page)
         {
             int pageSize = 4;
             int pageNumber = (page ?? 1);
@@ -67,14 +67,14 @@ namespace RSSref.Controllers
 
                 ViewBag.URL = currencResource.URL;
                 ViewBag.RSSName = ResourceName;
-                ViewBag.CollectionName = CollectionName;
+                ViewBag.CollectionName = id;
 
                 return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
             }
 
 
             // find collection by name (made for user-friendly url despite the speed)
-            currentCollection = await repository.FindCollectionByNameAsync(CollectionName);
+            currentCollection = await repository.FindCollectionByNameAsync(ViewBag.CollectionName);
 
             // find resource
             currencResource = await repository.FindResourceByNameAsync(ResourceName);
@@ -100,7 +100,7 @@ namespace RSSref.Controllers
             
             ViewBag.URL = currencResource.URL;
             ViewBag.RSSName = ResourceName;
-            ViewBag.CollectionName = CollectionName;
+            ViewBag.CollectionName = ViewBag.CollectionName;
 
             return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
         }
