@@ -67,10 +67,7 @@ namespace RSSref.Models
                 new MainCollection { Name = "News" },
                 new MainCollection { Name = "Games"}
             };
-            foreach (var defItemColl in mainCollectionsDefault)
-            {
-                context.Set<MainCollection>().AddIfNotExists(defItemColl, x => x.Name == defItemColl.Name);
-            }
+            context.MainCollections.AddRange(mainCollectionsDefault);
             context.SaveChanges();
 
 
@@ -83,10 +80,7 @@ namespace RSSref.Models
                 new MainResource{ ResourceName = "DTF", URL = "https://dtf.ru/rss/all", MainCollection_Id = mainCollectionsDefault[2].Id },
 
             };
-            foreach (var defItemRes in mainResourcesDefault)
-            {
-                context.Set<MainResource>().AddIfNotExists(defItemRes, x => x.ResourceName == defItemRes.ResourceName);
-            }
+            context.MainResources.AddRange(mainResourcesDefault);
 
 
             context.SaveChanges();
