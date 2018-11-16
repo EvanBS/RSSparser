@@ -9,7 +9,6 @@
 <h2>Add new resource</h2>
 <asp:RadioButton ID="MainCollection_Id" runat="server" />
 
-
 <br />
 @using (Html.BeginForm("AddResource", "Home", FormMethod.Post))
 {
@@ -17,32 +16,17 @@
     <p>Выберите категорию: </p>
 
     <fieldset>
-        <div class="btn-group form-group" data-toggle="buttons">
 
-            @foreach (var item in ViewBag.collections)
-            {
-                <label class="btn btn-primary active">
-
-                    <input class="focus form-control" checked="checked" hidden type="radio" autocomplete="off" name="MainCollection_Id" value=@item.Id>
-
-                    @item.Name
-                </label>
-            }
-        </div>
-
-
-
+        @Html.DropDownListFor(model => model.MainCollection_Id, ViewBag.collections as SelectList, new { @class = "form-control" })
+        <br />
         <div class="form-group">
             <p>Введите имя ресурса: </p>
             <input type="text" class="form-control" name="ResourceName" value="" />
 
-
             <p>Введите адрес: </p>
             <input type="text" class="form-control" name="URL" value="" />
-
         </div>
 
         <p><input id="submitButton" class="btn btn-primary" type="submit" value="Подтвердить" /></p>
-
     </fieldset>
 }

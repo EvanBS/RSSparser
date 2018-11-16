@@ -12,13 +12,13 @@ namespace RSSref.Controllers
 {
     public class HomeController : Controller
     {
-        IRepository repository;
+        private IRepository repository;
 
-        MainCollection currentCollection = new MainCollection();
+        private MainCollection currentCollection = new MainCollection();
 
-        MainResource currencResource = new MainResource();
+        private MainResource currencResource = new MainResource();
 
-        IEnumerable<RSSFeed> RSSFeedData = null;
+        private IEnumerable<RSSFeed> RSSFeedData = null;
 
         public HomeController(IRepository repository)
         {
@@ -39,7 +39,6 @@ namespace RSSref.Controllers
             return View();
         }
 
-
         [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult AddCollection(MainCollection collection)
@@ -49,7 +48,6 @@ namespace RSSref.Controllers
                 repository.SaveCollection(collection);
                 repository.SaveChanges();
             }
-
 
             return RedirectToAction("Index");
         }
@@ -64,14 +62,12 @@ namespace RSSref.Controllers
 
             if (currencResource.ResourceName == ResourceName)
             {
-
                 ViewBag.URL = currencResource.URL;
                 ViewBag.RSSName = ResourceName;
                 ViewBag.CollectionName = id;
 
                 return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
             }
-
 
             // find collection by name (made for user-friendly url despite the speed)
             currentCollection = await repository.FindCollectionByNameAsync(ViewBag.CollectionName);
@@ -86,18 +82,17 @@ namespace RSSref.Controllers
             XDocument xml = XDocument.Parse(RSSData);
 
             RSSFeedData = (from x in xml.Descendants("item")
-                               let bytesTitle = Encoding.Default.GetBytes(((string)x.Element("title")))
-                               let bytesDesc = Encoding.Default.GetBytes(((string)x.Element("description")))
+                           let bytesTitle = Encoding.Default.GetBytes(((string)x.Element("title")))
+                           let bytesDesc = Encoding.Default.GetBytes(((string)x.Element("description")))
 
-                               select new RSSFeed
-                               {
-                                   Title = Encoding.UTF8.GetString(bytesTitle),
-                                   Link = ((string)x.Element("link")),
-                                   Description = Encoding.UTF8.GetString(bytesDesc),
-                                   PubDate = ((string)x.Element("pubDate"))
-                               });
+                           select new RSSFeed
+                           {
+                               Title = Encoding.UTF8.GetString(bytesTitle),
+                               Link = ((string)x.Element("link")),
+                               Description = Encoding.UTF8.GetString(bytesDesc),
+                               PubDate = ((string)x.Element("pubDate"))
+                           });
 
-            
             ViewBag.URL = currencResource.URL;
             ViewBag.RSSName = ResourceName;
             ViewBag.CollectionName = ViewBag.CollectionName;
@@ -105,16 +100,14 @@ namespace RSSref.Controllers
             return View(RSSFeedData.ToPagedList(pageNumber, pageSize));
         }
 
-
         [Authorize(Roles = "admin")]
         [HttpGet]
-        public async Task<ActionResult> AddResource()
+        public ActionResult AddResource()
         {
-            ViewBag.collections = await repository.GetCollectionsJoinResourcesAsync();
-
+            SelectList collections = new SelectList(repository.context.MainCollections, "Id", "Name");
+            ViewBag.collections = collections;
             return View();
         }
-
 
         [Authorize(Roles = "admin")]
         [HttpPost]

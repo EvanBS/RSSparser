@@ -24,7 +24,6 @@ namespace RSSref
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-
             // Dependency
             NinjectModule registrations = new NinjectRegistrations();
             var kernel = new StandardKernel(registrations);

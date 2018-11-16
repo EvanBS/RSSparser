@@ -1,20 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace RSSref.Models
 {
-
     public class ApplicationUser : IdentityUser
     {
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
-
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
 
             return userIdentity;
@@ -46,13 +44,11 @@ namespace RSSref.Models
         MainResource GetResource(int id);
     }
 
-
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public virtual DbSet<MainCollection> MainCollections { get; set; }
 
         public virtual DbSet<MainResource> MainResources { get; set; }
-
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -102,12 +98,12 @@ namespace RSSref.Models
 
         public void SaveCollection(MainCollection mainCollection)
         {
-            db.MainCollections.AddIfNotExists(mainCollection);
+            db.MainCollections.Add(mainCollection);
         }
 
         public void SaveResource(MainResource mainResource)
         {
-            db.MainResources.AddIfNotExists(mainResource);
+            db.MainResources.Add(mainResource);
         }
 
         public void SaveChanges()
@@ -125,7 +121,6 @@ namespace RSSref.Models
             return await context.MainResources.Where(r => r.ResourceName == ResourceName).FirstOrDefaultAsync();
         }
 
-
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -137,6 +132,7 @@ namespace RSSref.Models
                 }
             }
         }
+
         public void Dispose()
         {
             Dispose(true);

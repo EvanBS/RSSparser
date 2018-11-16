@@ -31,6 +31,7 @@ namespace RSSref.Models
         [Required]
         [Display(Name = "Код")]
         public string Code { get; set; }
+
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Запомнить браузер?")]
